@@ -7,27 +7,52 @@ import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.examen1.BDD.BD
+import com.example.examen1.BDD.IngredientManager
 import com.example.examen1.R
+import org.example.models.Ingredient
 
 class HomeIngredientActivity : AppCompatActivity() {
+    private lateinit var ingredientManager: IngredientManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_ingredient)
         Log.i("ciclo-vida", "onCreate")
+        ingredientManager = IngredientManager()
     }
 
     override fun onStart() {
         super.onStart()
         Log.i("ciclo-vida", "onStart")
         val listViewU = findViewById<ListView>(R.id.lv_ingredients_list)
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            BD.tables!!.readIngredients()
-        )
-        listViewU.adapter = adapter
-        this.registerForContextMenu(listViewU)
+        ingredientManager.readIngredients().addOnSuccessListener { result ->
+            val ingredients = arrayListOf<Ingredient>()
 
+//            val ingredients = result.toObjects(Ingredient::class.java)
+            for (document in result) {
+                Log.i("docIngredient", "document.data: ${document.data}")
+                val ingredient = Ingredient(
+                    document.id,
+                    document.data["name"] as String,
+                    (document.data["quantity"] as Long).toInt(),
+                    document.data["unit"] as String
+                )
+                ingredients.add(ingredient)
+            }
+            val adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                ingredients
+            )
+            listViewU.adapter = adapter
+            this.registerForContextMenu(listViewU)
+        }
+//        val adapter = ArrayAdapter(
+//            this,
+//            android.R.layout.simple_list_item_1,
+//            ingredientManager.readIngredients()
+//        )
+//        listViewU.adapter = adapter
+//        this.registerForContextMenu(listViewU)
         val button_ingredient_menu_add = findViewById<Button>(R.id.button_ingredient_menu_add)
         val button_ingredient_menu_edit = findViewById<Button>(R.id.button_ingredient_menu_edit)
         val button_ingredient_menu_delete = findViewById<Button>(R.id.button_ingredient_menu_delete)

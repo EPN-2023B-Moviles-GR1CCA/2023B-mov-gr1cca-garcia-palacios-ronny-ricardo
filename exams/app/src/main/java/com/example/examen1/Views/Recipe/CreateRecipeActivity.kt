@@ -5,13 +5,19 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.examen1.BDD.BD
+import com.example.examen1.BDD.IngredientManager
+import com.example.examen1.BDD.RecipeManager
 import com.example.examen1.R
 import com.google.android.material.textfield.TextInputEditText
 
 class CreateRecipeActivity : AppCompatActivity(){
+
+    private lateinit var recipeManager: RecipeManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_recipe)
+        recipeManager = RecipeManager()
     }
 
     override fun onStart() {
@@ -33,7 +39,8 @@ class CreateRecipeActivity : AppCompatActivity(){
 
             if (name != "" && description != "" && ingredients != "") {
                 val uuid = java.util.UUID.randomUUID().toString()
-                BD.tables!!.createRecipe(uuid, name, description, ingredients)
+//                BD.tables!!.createRecipe(uuid, name, description, ingredients)
+                recipeManager.createRecipe(uuid, name, description, ingredients)
                 finish()
             }
         }

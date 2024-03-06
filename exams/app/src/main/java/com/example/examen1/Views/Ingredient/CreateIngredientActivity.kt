@@ -4,38 +4,46 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.example.examen1.BDD.BD
+import com.example.examen1.BDD.IngredientManager
 import com.example.examen1.R
 import com.google.android.material.textfield.TextInputEditText
+import org.example.models.Ingredient
 
 class CreateIngredientActivity : AppCompatActivity() {
+
+    private lateinit var ingredientManager: IngredientManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_ingredient)
+
+        ingredientManager = IngredientManager()
     }
+
     override fun onStart() {
         super.onStart()
         Log.i("ciclo-vida", "onStart")
-        val button_menu_back = findViewById<Button>(R.id.button_back_ingredient)
-        button_menu_back.setOnClickListener {
+
+        val buttonMenuBack = findViewById<Button>(R.id.button_back_ingredient)
+        buttonMenuBack.setOnClickListener {
             finish()
         }
-        var txt_ingredient_add_name = findViewById<TextInputEditText>(R.id.txt_ingredient_add_name)
-        var txt_ingredient_add_quantity = findViewById<TextInputEditText>(R.id.txt_ingredient_add_quantity)
-        var text_ingredient_add_unit = findViewById<TextInputEditText>(R.id.text_ingredient_add_unit)
-        var btn_ingredient_add = findViewById<Button>(R.id.btn_ingredient_add)
 
-        btn_ingredient_add.setOnClickListener {
-            var name = txt_ingredient_add_name.text.toString()
-            var quantity = txt_ingredient_add_quantity.text.toString()
-            var unit = text_ingredient_add_unit.text.toString()
+        val txtIngredientAddName = findViewById<TextInputEditText>(R.id.txt_ingredient_add_name)
+        val txtIngredientAddQuantity = findViewById<TextInputEditText>(R.id.txt_ingredient_add_quantity)
+        val textIngredientAddUnit = findViewById<TextInputEditText>(R.id.text_ingredient_add_unit)
+        val btnIngredientAdd = findViewById<Button>(R.id.btn_ingredient_add)
 
-            if (name != "" && quantity != "" && unit != "") {
+        btnIngredientAdd.setOnClickListener {
+            val name = txtIngredientAddName.text.toString()
+            val quantity = txtIngredientAddQuantity.text.toString()
+            val unit = textIngredientAddUnit.text.toString()
+
+            if (name.isNotEmpty() && quantity.isNotEmpty() && unit.isNotEmpty()) {
                 val uuid = java.util.UUID.randomUUID().toString()
-                BD.tables!!.createIngredient(uuid,name, quantity, unit)
+                ingredientManager.createIngredient(uuid, name, quantity.toLong(), unit)
                 finish()
             }
         }
     }
-
 }
